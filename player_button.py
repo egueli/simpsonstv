@@ -36,11 +36,20 @@ class VideoPlayer():
         self.active = False
         self.process = None
         self.button = button
-        
+
+        self.isButtonPressed = None
+      
 
     def update(self):
-        print(self.button.isPressed())
+        pressed = self.button.isPressed()
+        if pressed != self.isButtonPressed:
+            if pressed:
+                self.onButtonPressed()
+            self.isButtonPressed = pressed
 
+
+    def onButtonPressed(self):
+        print("button pressed")
 
 if __name__ == '__main__':
     videos = getVideos()
