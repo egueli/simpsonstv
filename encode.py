@@ -1,7 +1,7 @@
 import os
 
 newFiles = []
-directory = os.path.dirname(os.path.realpath(__file__))
+directory = os.path.curdir
 destinationDirectory = os.path.join(directory, 'encoded')
 
 if not os.path.exists(destinationDirectory):
@@ -22,6 +22,7 @@ def isVideo(videofile):
 newFiles = [os.path.join(dp, f) for dp, dn, filenames in os.walk(directory) for f in filenames if isVideo(f)]
 
 for filepath in newFiles:
+	print(f'* {filepath}')
 	video = os.path.basename(filepath)
 	videoName = os.path.splitext(video)[0]
 	newFile = '%s.mp4' % videoName
