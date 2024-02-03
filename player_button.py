@@ -29,13 +29,25 @@ class Button():
     def isPressed(self):
         return not GPIO.input(self.pin)
 
+class ScreenBacklight():
+    def __init__(self):
+        # Need to set the initial value before doing anything. No idea why.
+        self.turnOff()
+
+    def turnOn(self):
+        os.system("sudo bash -c 'echo 0 > /sys/class/backlight/rpi_backlight/bl_power'")
+
+    def turnOff(self):
+        os.system("sudo bash -c 'echo 1 > /sys/class/backlight/rpi_backlight/bl_power'")
+
 
 class VideoPlayer():
-    def __init__(self, playlist, button):
+    def __init__(self, playlist, button, backlight: ScreenBacklight):
         self.playlist = playlist
         self.active = False
         self.process = None
         self.button = button
+        self.backlight = backlight
 
         self.isButtonPressed = None
       
@@ -49,12 +61,27 @@ class VideoPlayer():
 
 
     def onButtonPressed(self):
-        print("button pressed")
+        self.active = not self.active
+        if self.active:
+            self.onActivate()
+        else:
+            self.onDeactivate()
+
+
+    def onActivate(self):
+        print("activate!")
+        self.backlight.turnOn()
+
+    def onDeactivate(self):
+        print("deactivate!")
+        self.backlight.turnOff()
+        
 
 if __name__ == '__main__':
     videos = getVideos()
     button = Button()
-    player = VideoPlayer(videos, button)
+    backlight = ScreenBacklight()
+    player = VideoPlayer(videos, button, backlight)
     while (True):
         player.update()
         # playVideos()
