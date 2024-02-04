@@ -53,6 +53,10 @@ class VideoPlayer():
       
 
     def update(self):
+        self.updateButtonState()
+        self.updatePlayerState()
+
+    def updateButtonState(self):
         pressed = self.button.isPressed()
         if pressed != self.isButtonPressed:
             if pressed:
@@ -88,7 +92,16 @@ class VideoPlayer():
     def startVideoPlayer(self):
         video = random.choice(self.playlist)
         self.player = OMXPlayer(video, args=['--no-osd', '--aspect-mode', 'fill'])
+        # it takes about this long for omxplayer to warm up and start displaying a picture.
+        # Before that, calls to OMXPlayer.playback_status() will hang.
+        time.sleep(1.5)
 
+    def updatePlayerState(self):
+        state = None
+        if self.player is not None:
+            state = self.player.playback_status()
+        
+        print(f'updatePlayerState {state}')
 
 if __name__ == '__main__':
     videos = getVideos()
