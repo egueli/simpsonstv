@@ -54,7 +54,6 @@ class VideoPlayer():
 
     def update(self):
         self.updateButtonState()
-        self.updatePlayerState()
 
     def updateButtonState(self):
         pressed = self.button.isPressed()
@@ -65,24 +64,25 @@ class VideoPlayer():
 
 
     def onButtonPressed(self):
-        self.active = not self.active
-        if self.active:
-            self.onActivate()
+        if not self.active:
+            self.activate()
         else:
-            self.onDeactivate()
+            self.deactivate()
 
 
-    def onActivate(self):
+    def activate(self):
         print("activate!")
 
         self.stopVideoPlayer()
         self.startVideoPlayer()
         self.backlight.turnOn()
+        self.active = True
 
-    def onDeactivate(self):
+    def deactivate(self):
         print("deactivate!")
         self.backlight.turnOff()
         self.stopVideoPlayer()
+        self.active = False
         
     def stopVideoPlayer(self):
         if self.player:
@@ -96,12 +96,13 @@ class VideoPlayer():
         # Before that, calls to OMXPlayer.playback_status() will hang.
         time.sleep(1.5)
 
-    def updatePlayerState(self):
-        state = None
-        if self.player is not None:
-            state = self.player.playback_status()
-        
-        print(f'updatePlayerState {state}')
+        self.player.exitEvent += lambda player, exit_status: self.onVideoPlayerExited()
+
+    def onVideoPlayerExited(self):
+        print("exited!")
+        self.backlight.turnOff()
+        self.player = None
+        self.active = False
 
 if __name__ == '__main__':
     videos = getVideos()
