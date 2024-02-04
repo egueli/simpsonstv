@@ -1,8 +1,8 @@
 import os
 import random
 import time
-from subprocess import PIPE, Popen, STDOUT
 import RPi.GPIO as GPIO
+from omxplayer.player import OMXPlayer
 
 directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'videos')
 
@@ -45,7 +45,7 @@ class VideoPlayer():
     def __init__(self, playlist, button, backlight: ScreenBacklight):
         self.playlist = playlist
         self.active = False
-        self.process = None
+        self.player: OMXPlayer = None
         self.button = button
         self.backlight = backlight
 
@@ -72,10 +72,23 @@ class VideoPlayer():
         print("activate!")
         self.backlight.turnOn()
 
+        self.stopVideoPlayer()
+        self.startVideoPlayer()
+
     def onDeactivate(self):
         print("deactivate!")
         self.backlight.turnOff()
+        self.stopVideoPlayer()
         
+    def stopVideoPlayer(self):
+        if self.player:
+            self.player.quit()
+        self.player = None
+
+    def startVideoPlayer(self):
+        video = random.choice(self.playlist)
+        self.player = OMXPlayer(video, args=['--no-osd', '--aspect-mode', 'fill'])
+
 
 if __name__ == '__main__':
     videos = getVideos()
