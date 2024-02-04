@@ -111,5 +111,4 @@ if __name__ == '__main__':
     player = VideoPlayer(videos, button, backlight)
     while (True):
         player.update()
-        # playVideos()
-        time.sleep(0.3)
+        time.sleep(0.15)
