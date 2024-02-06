@@ -72,10 +72,10 @@ class VideoPlayer():
 
     def activate(self):
         print("activate!")
+        self.backlight.turnOn()
 
         self.stopVideoPlayer()
         self.startVideoPlayer()
-        self.backlight.turnOn()
         self.active = True
 
     def deactivate(self):
