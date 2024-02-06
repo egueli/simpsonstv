@@ -109,6 +109,7 @@ if __name__ == '__main__':
     button = Button()
     backlight = ScreenBacklight()
     player = VideoPlayer(videos, button, backlight)
+    player.onButtonPressed()
     while (True):
         player.update()
         time.sleep(0.15)
